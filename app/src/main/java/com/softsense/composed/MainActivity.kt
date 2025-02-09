@@ -26,14 +26,10 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         setContent {
             ComposedTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()
-                ) { innerPadding ->
-                    Surface(
-                        modifier = Modifier.fillMaxSize().padding(innerPadding),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        PostListScreen()
-                    }
+                Surface(
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    PostListScreen()
                 }
             }
         }

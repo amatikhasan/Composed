@@ -82,4 +82,6 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     // Coil for image loading
     implementation(libs.coil.compose)
+    //navigation
+    implementation(libs.androidx.navigation.compose)
 }

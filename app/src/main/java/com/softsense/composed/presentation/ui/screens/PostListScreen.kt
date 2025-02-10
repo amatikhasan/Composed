@@ -1,5 +1,6 @@
 package com.softsense.composed.presentation.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.softsense.composed.presentation.ui.components.AppBar
 import com.softsense.composed.presentation.ui.components.PostCard
 import com.softsense.composed.presentation.viewModel.PostUiState
@@ -24,7 +26,7 @@ import com.softsense.composed.presentation.viewModel.PostViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostListScreen(viewModel: PostViewModel = hiltViewModel()) {
+fun PostListScreen(viewModel: PostViewModel = hiltViewModel(), navController: NavController) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -63,10 +65,10 @@ fun PostListScreen(viewModel: PostViewModel = hiltViewModel()) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(8.dp),
-                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(posts) { postWithUser ->
-                            PostCard(postWithUser)
+                            PostCard(postWithUser, navController)
                         }
                     }
                 }

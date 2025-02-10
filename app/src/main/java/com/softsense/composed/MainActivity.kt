@@ -14,7 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.softsense.composed.presentation.ui.screens.HomeScreen
 import com.softsense.composed.presentation.ui.screens.PostListScreen
+import com.softsense.composed.presentation.ui.screens.RecipeDetailScreen
 import com.softsense.composed.ui.theme.ComposedTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,23 +35,42 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    PostListScreen()
+                    val navController = rememberNavController()
+                    SetupNavGraph(navController = navController)
                 }
             }
         }
     }
 }
 
+@Composable
+fun SetupNavGraph(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            //PostListScreen(navController = navController)
+            HomeScreen()
+        }
+        composable("recipeDetail/{postId}") { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getString("recipeId")
+            RecipeDetailScreen(
+                onBackClick = { navController.popBackStack() },
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun HomePreview() {
     ComposedTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Surface(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 color = MaterialTheme.colorScheme.background,
             ) {
-                PostListScreen()
+                HomeScreen()
             }
         }
     }

@@ -13,15 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowInsetsControllerCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme =
-    darkColorScheme(primary = Purple80, secondary = PurpleGrey80, tertiary = Pink80)
+    darkColorScheme(primary = ColorPrimary, secondary = ColorSecondary, tertiary = Pink80)
 
 private val LightColorScheme =
-    lightColorScheme(primary = Purple40, secondary = PurpleGrey40, tertiary = Pink40
+    lightColorScheme(primary = ColorPrimary, secondary = ColorSecondary, tertiary = Pink40
 
         /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -52,7 +50,7 @@ fun ComposedTheme(darkTheme: Boolean = isSystemInDarkTheme(),
         // Set status bar icons to white for both light and dark themes
         systemUiController.setStatusBarColor(
             color = Color.Transparent,
-            darkIcons = false
+            darkIcons = true
         )
     }
 

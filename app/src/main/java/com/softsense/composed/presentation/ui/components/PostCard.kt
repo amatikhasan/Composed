@@ -21,14 +21,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.softsense.composed.domain.model.PostWithUser
 
 @Composable
-fun PostCard(postWithUser: PostWithUser) {
+fun PostCard(postWithUser: PostWithUser, navController: NavController) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {
+            // go to post recipe detail screen
+            navController.navigate("recipeDetail/${postWithUser.post.id}")
+        }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Header: Profile icon and user name.

@@ -1,7 +1,7 @@
 package com.softsense.composed.di
 
-import com.softsense.composed.data.repository.PostRepositoryImpl
-import com.softsense.composed.domain.repository.PostRepository
+import com.softsense.composed.data.repository.RecipeRepositoryImpl
+import com.softsense.composed.domain.repository.RecipeRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 abstract class RepositoryModule {
     @Binds
     @Singleton
-    abstract fun bindPostRepository(
-        postRepositoryImpl: PostRepositoryImpl
-    ): PostRepository
+    abstract fun bindRecipeRepository(
+        recipeRepositoryImpl: RecipeRepositoryImpl
+    ): RecipeRepository
 }

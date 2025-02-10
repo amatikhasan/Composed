@@ -33,7 +33,7 @@ fun RecipeCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = recipe.imageUrl,
+                model = recipe.image,
                 contentDescription = recipe.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -68,7 +68,7 @@ fun RecipeCard(
                     color = MaterialTheme.colorScheme.surface
                 )
                 Text(
-                    text = "${recipe.duration} min",
+                    text = "${recipe.cookTimeMinutes} min",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.surface
                 )

@@ -23,8 +23,8 @@ import com.softsense.composed.domain.model.Category
 
 @Composable
 fun CategorySection(
-    categories: List<Category>,
-    onCategoryClick: (Category) -> Unit
+    categories: List<String>,
+    onCategoryClick: (String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -49,7 +49,7 @@ fun CategorySection(
 
 @Composable
 fun CategoryItem(
-    category: Category,
+    category: String,
     onClick: () -> Unit
 ) {
     Column(
@@ -67,21 +67,8 @@ fun CategoryItem(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = category.name,
+            text = category,
             style = MaterialTheme.typography.labelMedium
         )
     }
-}
-
-@Preview
-@Composable
-fun CategorySectionPreview() {
-    val categories = listOf(
-        Category("1", "Sushi", R.drawable.food),
-        Category("2", "Taco", R.drawable.food),
-        Category("3", "Salad", R.drawable.food),
-        Category("4", "Chicken", R.drawable.food)
-    )
-
-    CategorySection(categories = categories, onCategoryClick = {})
 }

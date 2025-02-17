@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.softsense.composed.presentation.ui.screens.AllRecipesScreen
 import com.softsense.composed.presentation.ui.screens.HomeScreen
 import com.softsense.composed.presentation.ui.screens.RecipeDetailScreen
 import com.softsense.composed.ui.theme.ComposedTheme
@@ -52,6 +53,19 @@ fun SetupNavGraph() {
             val recipeId = backStackEntry.arguments?.getString("recipeId")
             RecipeDetailScreen(
                 onBackClick = { navController.popBackStack() },
+            )
+        }
+        composable("allRecipes/{category}") {  backStackEntry ->
+            val category = backStackEntry.arguments?.getString("category")
+            AllRecipesScreen(
+                category = category,
+                navController = navController
+            )
+        }
+        composable("allRecipes") {
+            AllRecipesScreen(
+                category = null,
+                navController = navController
             )
         }
     }

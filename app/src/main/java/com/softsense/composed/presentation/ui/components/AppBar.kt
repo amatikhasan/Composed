@@ -1,6 +1,7 @@
 package com.softsense.composed.presentation.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,23 +15,22 @@ import androidx.compose.runtime.Composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(
+    title: String,
     onRefresh: () -> Unit = {}
 ) {
     TopAppBar(
         title = {
             Text(
-                text = "Composed App",
+                text = title,
                 style = MaterialTheme.typography.titleMedium
             )
         },
-        //modifier = Modifier.height(72.dp),
-        actions = {
-            // Refresh button
-            IconButton(onClick = onRefresh,
-            ) {
+        // add back button
+        navigationIcon = {
+            IconButton(onClick = { /*TODO*/ }) {
                 Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Refresh posts"
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back"
                 )
             }
         },

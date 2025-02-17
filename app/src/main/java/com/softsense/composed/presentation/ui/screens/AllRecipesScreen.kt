@@ -16,51 +16,40 @@ import com.softsense.composed.R
 import com.softsense.composed.domain.model.Recipe
 import com.softsense.composed.presentation.ui.components.CategorySection
 import com.softsense.composed.presentation.ui.components.LatestRecipes
+import com.softsense.composed.presentation.ui.components.RecipeCard
 import com.softsense.composed.presentation.viewModel.CategoryUiState
 import com.softsense.composed.presentation.viewModel.CategoryViewModel
 import com.softsense.composed.presentation.viewModel.RecipeUiState
 import com.softsense.composed.presentation.viewModel.RecipeViewModel
 
 @Composable
-fun HomeScreen(
+fun AllRecipesScreen(
     modifier: Modifier = Modifier,
-    categoryViewModel: CategoryViewModel = hiltViewModel(),
+    category: String?,
     recipeViewModel: RecipeViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val recipeUiState by recipeViewModel.recipeUiState.collectAsState()
-    val categoryUiState by categoryViewModel.categoryUiState.collectAsState()
-
-    fun onCategoryClick(category: String) {
-        navController.navigate("allRecipes/$category")
-    }
+    if (category != null)
+    recipeViewModel.loadRecipeByCategory(category)
 
     fun onRecipeClick(recipe: Recipe) {
         navController.navigate("recipeDetail/${recipe.id}")
     }
 
-    fun onViewAllClick() {
-        navController.navigate("allRecipes")
-    }
-
-    HomeScreenContent(
+    AllRecipesScreen(
         modifier = modifier,
         recipeUiState = recipeUiState,
-        categoryUiState = categoryUiState,
-        onCategoryClick = { category -> onCategoryClick(category) },
         onRecipeClick = { recipe -> onRecipeClick(recipe) },
-        onViewAllClick = { onViewAllClick() }
     )
+
 }
 
 @Composable
-private fun HomeScreenContent(
+private fun AllRecipesScreen(
     modifier: Modifier = Modifier,
     recipeUiState: RecipeUiState,
-    categoryUiState: CategoryUiState,
-    onCategoryClick: (String) -> Unit,
     onRecipeClick: (Recipe) -> Unit,
-    onViewAllClick: () -> Unit
 ) {
     Surface(
         modifier = modifier
@@ -73,9 +62,6 @@ private fun HomeScreenContent(
                 .fillMaxSize()
                 .padding(top = 16.dp)
         ) {
-            item {
-                HomeHeader()
-            }
 
             item {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -85,46 +71,23 @@ private fun HomeScreenContent(
                 is RecipeUiState.Loading -> item { LoadingIndicator() }
                 is RecipeUiState.Error -> item { ErrorMessage(recipeUiState.message) }
                 is RecipeUiState.Success -> {
-                    if (categoryUiState is CategoryUiState.Success) {
-                        item {
-                            CategorySection(
-                                categories = categoryUiState.categories,
-                                onCategoryClick = { category -> onCategoryClick(category) }
+                    item {
+                        recipeUiState.recipes.forEach { recipe ->
+                            RecipeCard(
+                                recipe = recipe,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(180.dp)
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 8.dp),
+                                onClick = { onRecipeClick(recipe) }
                             )
-                        }
-
-                        item {
-                            Spacer(modifier = Modifier.height(24.dp))
-                        }
-
-                        item {
-                            LatestRecipes(
-                                recipes = recipeUiState.recipes,
-                                onRecipeClick = onRecipeClick,
-                                onViewAllClick = onViewAllClick
-                            )
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun HomeHeader(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(R.string.home_header_text),
-            style = MaterialTheme.typography.headlineSmall
-        )
     }
 }
 

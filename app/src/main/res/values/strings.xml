@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Composed</string>
+    <string name="home_header_text">"Let's Find a\nHealthy Recipe"</string>
 </resources>

@@ -34,8 +34,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    SetupNavGraph(navController = navController)
+                    SetupNavGraph()
                 }
             }
         }
@@ -43,10 +42,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SetupNavGraph(navController: NavHostController) {
+fun SetupNavGraph() {
+    val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
         composable("recipeDetail/{recipeId}") { backStackEntry ->
             val recipeId = backStackEntry.arguments?.getString("recipeId")
@@ -68,7 +68,7 @@ fun HomePreview() {
                     .padding(innerPadding),
                 color = MaterialTheme.colorScheme.background,
             ) {
-                HomeScreen()
+                HomeScreen(navController = rememberNavController())
             }
         }
     }

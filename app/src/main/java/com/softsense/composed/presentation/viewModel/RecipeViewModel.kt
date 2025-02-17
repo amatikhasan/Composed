@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softsense.composed.domain.model.Recipe
-import com.softsense.composed.domain.repository.RecipeRepository
+import com.softsense.composed.domain.usecase.GetRecipeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,31 +12,23 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RecipeViewModel @Inject constructor(private val repository: RecipeRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow<RecipeUiState>(RecipeUiState.Loading)
-    val uiState: StateFlow<RecipeUiState> = _uiState
+class RecipeViewModel @Inject constructor(private val useCase: GetRecipeUseCase) : ViewModel() {
+    private val _recipeUiState = MutableStateFlow<RecipeUiState>(RecipeUiState.Loading)
+    val recipeUiState: StateFlow<RecipeUiState> = _recipeUiState
 
     init {
         loadRecipes()
-        loadCategories()
     }
 
     fun loadRecipes() {
         viewModelScope.launch {
             try {
-                val response = repository.getRecipes()
-                _uiState.value = RecipeUiState.Success(response.recipes) // Extract recipes from response
+                val response = useCase.invoke()
+                _recipeUiState.value = RecipeUiState.Success(response.recipes) // Extract recipes from response
             } catch (e: Exception) {
                 Log.e("API_ERROR", "Exception: ${e.message}")
-                _uiState.value = RecipeUiState.Error("Failed to load recipes")
+                _recipeUiState.value = RecipeUiState.Error("Failed to load recipes")
             }
-        }
-    }
-
-    fun loadCategories() {
-        viewModelScope.launch {
-            val categories = repository.getRecipeCategories()
-            _uiState.value = RecipeUiState.Success(categories = categories)
         }
     }
 
@@ -50,11 +42,11 @@ class RecipeViewModel @Inject constructor(private val repository: RecipeReposito
     fun loadRecipeByCategory(category: String) {
         viewModelScope.launch {
             try {
-                val response = repository.getRecipeByCategory(category)
-                _uiState.value = RecipeUiState.Success(recipeByCategory = response.recipes)
+                val response = useCase.getRecipeByCategory(category)
+                _recipeUiState.value = RecipeUiState.Success(recipeByCategory = response.recipes)
             } catch (e: Exception) {
                 Log.e("API_ERROR", "Exception: ${e.message}")
-                _uiState.value = RecipeUiState.Error("Failed to load recipes")
+                _recipeUiState.value = RecipeUiState.Error("Failed to load recipes")
             }
         }
     }

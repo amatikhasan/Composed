@@ -1,6 +1,5 @@
 package com.softsense.composed.presentation.viewModel
 
-import com.softsense.composed.domain.model.Category
 import com.softsense.composed.domain.model.Recipe
 
 sealed class RecipeUiState {

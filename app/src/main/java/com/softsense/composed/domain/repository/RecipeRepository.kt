@@ -1,6 +1,5 @@
 package com.softsense.composed.domain.repository
 
-import com.softsense.composed.domain.model.Category
 import com.softsense.composed.domain.model.Recipe
 import com.softsense.composed.domain.model.RecipeResponse
 

@@ -1,5 +1,6 @@
 package com.softsense.composed.presentation.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.softsense.composed.domain.model.Recipe
@@ -39,8 +42,8 @@ fun RecipeCard(
                 modifier = Modifier.fillMaxSize()
             )
 
-            IconButton(
-                onClick = { /* Toggle favorite */ },
+            /*IconButton(
+                onClick = { *//* Toggle favorite *//* },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
@@ -50,27 +53,26 @@ fun RecipeCard(
                     contentDescription = "Favorite",
                     tint = MaterialTheme.colorScheme.surface
                 )
-            }
+            }*/
 
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(16.dp)
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.75f))
+                    .padding(vertical = 4.dp, horizontal = 8.dp)
+
             ) {
                 Text(
                     text = recipe.name,
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.inverseSurface
                 )
                 Text(
-                    text = recipe.cuisine,
+                    text = "${recipe.cuisine} · ${recipe.cookTimeMinutes} min",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.surface
-                )
-                Text(
-                    text = "${recipe.cookTimeMinutes} min",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.inverseSurface
                 )
             }
         }

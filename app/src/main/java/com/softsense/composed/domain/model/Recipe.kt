@@ -25,7 +25,3 @@ data class Recipe(
     val reviewCount: Int,
     val mealType: List<String>
 )
-
-data class Category(
-    val name: String,
-)

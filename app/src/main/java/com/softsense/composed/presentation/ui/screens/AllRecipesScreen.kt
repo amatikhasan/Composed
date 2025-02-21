@@ -2,6 +2,10 @@ package com.softsense.composed.presentation.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,7 +35,7 @@ fun AllRecipesScreen(
 ) {
     val recipeUiState by recipeViewModel.recipeUiState.collectAsState()
     if (category != null)
-    recipeViewModel.loadRecipeByCategory(category)
+        recipeViewModel.loadRecipeByCategory(category)
 
     fun onRecipeClick(recipe: Recipe) {
         navController.navigate("recipeDetail/${recipe.id}")
@@ -41,48 +45,58 @@ fun AllRecipesScreen(
         modifier = modifier,
         recipeUiState = recipeUiState,
         onRecipeClick = { recipe -> onRecipeClick(recipe) },
+        onBackClick = { navController.popBackStack() }
     )
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AllRecipesScreen(
     modifier: Modifier = Modifier,
     recipeUiState: RecipeUiState,
     onRecipeClick: (Recipe) -> Unit,
+    onBackClick: () -> Unit
 ) {
-    Surface(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(top = 24.dp),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 16.dp)
-        ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Recipes")
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+            )
+        }
+    ) { paddingValues ->
+        Surface(modifier = modifier.fillMaxSize().padding(paddingValues),
+            color = MaterialTheme.colorScheme.background) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
 
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
 
-            when (recipeUiState) {
-                is RecipeUiState.Loading -> item { LoadingIndicator() }
-                is RecipeUiState.Error -> item { ErrorMessage(recipeUiState.message) }
-                is RecipeUiState.Success -> {
-                    item {
-                        recipeUiState.recipes.forEach { recipe ->
-                            RecipeCard(
-                                recipe = recipe,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(180.dp)
-                                    .padding(horizontal = 16.dp)
-                                    .padding(bottom = 8.dp),
-                                onClick = { onRecipeClick(recipe) }
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
+                when (recipeUiState) {
+                    is RecipeUiState.Loading -> item { LoadingIndicator() }
+                    is RecipeUiState.Error -> item { ErrorMessage(recipeUiState.message) }
+                    is RecipeUiState.Success -> {
+                        item {
+                            recipeUiState.recipes.forEach { recipe ->
+                                RecipeCard(recipe = recipe,
+                                    modifier = Modifier.fillMaxWidth().height(180.dp)
+                                        .padding(horizontal = 16.dp).padding(bottom = 8.dp),
+                                    onClick = { onRecipeClick(recipe) })
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
                         }
                     }
                 }

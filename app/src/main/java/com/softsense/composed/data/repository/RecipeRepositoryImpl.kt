@@ -1,7 +1,6 @@
 package com.softsense.composed.data.repository
 import android.util.Log
 import com.softsense.composed.data.remote.ApiService
-import com.softsense.composed.domain.model.Category
 import com.softsense.composed.domain.model.Recipe
 import com.softsense.composed.domain.model.RecipeResponse
 import com.softsense.composed.domain.repository.RecipeRepository

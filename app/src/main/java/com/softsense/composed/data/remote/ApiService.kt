@@ -1,6 +1,5 @@
 package com.softsense.composed.data.remote
 
-import com.softsense.composed.domain.model.Category
 import com.softsense.composed.domain.model.Recipe
 import com.softsense.composed.domain.model.RecipeResponse
 import retrofit2.http.GET

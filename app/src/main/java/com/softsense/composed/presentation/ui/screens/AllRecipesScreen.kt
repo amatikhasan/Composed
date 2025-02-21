@@ -19,7 +19,9 @@ import androidx.navigation.compose.rememberNavController
 import com.softsense.composed.R
 import com.softsense.composed.domain.model.Recipe
 import com.softsense.composed.presentation.ui.components.CategorySection
+import com.softsense.composed.presentation.ui.components.ErrorMessage
 import com.softsense.composed.presentation.ui.components.LatestRecipes
+import com.softsense.composed.presentation.ui.components.LoadingIndicator
 import com.softsense.composed.presentation.ui.components.RecipeCard
 import com.softsense.composed.presentation.viewModel.CategoryUiState
 import com.softsense.composed.presentation.viewModel.CategoryViewModel
@@ -103,33 +105,6 @@ private fun AllRecipesScreen(
             }
         }
     }
-}
-
-@Composable
-private fun LoadingIndicator(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun ErrorMessage(
-    message: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = message,
-        color = MaterialTheme.colorScheme.error,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    )
 }
 
 @Preview(showBackground = true)

@@ -2,7 +2,9 @@ package com.softsense.composed.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,15 +21,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.softsense.composed.R
+import com.softsense.composed.domain.model.Recipe
+import com.softsense.composed.presentation.ui.components.ErrorMessage
+import com.softsense.composed.presentation.ui.components.LoadingIndicator
+import com.softsense.composed.presentation.viewModel.RecipeUiState
+import com.softsense.composed.presentation.viewModel.RecipeViewModel
 import com.softsense.composed.ui.theme.ComposedTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeDetailScreen(
+    recipeId: Int,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(recipeId) {
+        recipeViewModel.getSingleRecipe(recipeId)
+    }
+    val recipeUiState by recipeViewModel.recipeUiState.collectAsState()
+    val recipeName by remember { derivedStateOf { (recipeUiState as? RecipeUiState.Success)?.recipe?.name } }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -36,7 +53,7 @@ fun RecipeDetailScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Turkish Cuisine")
+                        Text(recipeName ?: "Recipe Detail")
                     }
                 },
                 navigationIcon = {
@@ -44,7 +61,7 @@ fun RecipeDetailScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                actions = {
+               /* actions = {
                     var isFavorite by remember { mutableStateOf(false) }
                     IconButton(onClick = { isFavorite = !isFavorite }) {
                         Icon(
@@ -52,77 +69,82 @@ fun RecipeDetailScreen(
                             contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites"
                         )
                     }
-                }
+                }*/
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            // Recipe Image
-            Image(
-                painter = painterResource(id = R.drawable.food),
-                contentDescription = "Semizotu Salatasi",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Recipe Title
-            Text(
-                text = "Semizotu Salatasi",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Recipe Info Row
-            RecipeInfoRow()
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Description Section
-            Text(
-                text = "Description",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Semizotu salatasi is a unique Turkish salad made with purslane as the key ingredient. Purslane is a wild weed filled with Omega-3 fatty acids",
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            TextButton(
-                onClick = { /* Handle read more click */ },
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Text(
-                    text = "read more",
-                    color = MaterialTheme.colorScheme.primary
-                )
+        when(recipeUiState){
+            is RecipeUiState.Error -> {
+                ErrorMessage(message ="Error loading recipe")
             }
+            RecipeUiState.Loading -> {
+                LoadingIndicator()
+            }
+            is RecipeUiState.Success -> {
+                val recipe = (recipeUiState as RecipeUiState.Success).recipe
+                Column(
+                    modifier = modifier
+                        .padding(paddingValues)
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    // Recipe Image
+                    AsyncImage(
+                        model = recipe?.image,
+                        contentDescription = recipe?.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(240.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                    )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            // Ingredients Section
-            IngredientsSection()
+                    // Recipe Title
+                    Text(
+                        text = recipe?.name ?: "Unknown",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Recipe Info Row
+                    RecipeInfoRow(recipe = recipe!!)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Description Section
+                    Text(
+                        text = "Instructions",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    for (instruction in recipe.instructions) {
+                        Text(
+                            text = instruction,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Ingredients Section
+                    IngredientsSection(ingredients = recipe.ingredients)
+                }
+            }
         }
     }
 }
 
 @Composable
 private fun RecipeInfoRow(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    recipe: Recipe,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -130,15 +152,15 @@ private fun RecipeInfoRow(
     ) {
         RecipeInfoItem(
             icon = painterResource(id = R.drawable.recipe_splash_icon),
-            label = "30 min"
+            label = "${recipe.cookTimeMinutes} min"
         )
         RecipeInfoItem(
             icon = painterResource(id = R.drawable.recipe_splash_icon),
-            label = "234 cal"
+            label = "${recipe.caloriesPerServing} cal"
         )
         RecipeInfoItem(
             icon = painterResource(id = R.drawable.recipe_splash_icon),
-            label = "2 person"
+            label = "${recipe.servings} person"
         )
     }
 }
@@ -170,7 +192,8 @@ private fun RecipeInfoItem(
 
 @Composable
 private fun IngredientsSection(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    ingredients: List<String>,
 ) {
     Column(modifier = modifier) {
         Row(
@@ -184,23 +207,13 @@ private fun IngredientsSection(
                 fontWeight = FontWeight.Bold
             )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Ingredient Items
-        IngredientItem(
-            icon = painterResource(id = R.drawable.recipe_splash_icon),
-            name = "Purslane Leaf",
-            amount = "250 gm"
-        )
-
         Spacer(modifier = Modifier.height(8.dp))
-
-        IngredientItem(
-            icon = painterResource(id = R.drawable.recipe_splash_icon),
-            name = "Tomato Slices",
-            amount = "100 gm"
-        )
+        for (ingredient in ingredients) {
+            IngredientItem(
+                icon = painterResource(id = R.drawable.recipe_splash_icon),
+                name = ingredient,
+            )
+        }
     }
 }
 
@@ -208,7 +221,6 @@ private fun IngredientsSection(
 private fun IngredientItem(
     icon: Painter,
     name: String,
-    amount: String,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -231,14 +243,9 @@ private fun IngredientItem(
             )
             Text(
                 text = name,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyMedium
             )
         }
-        Text(
-            text = amount,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.outline
-        )
     }
 }
 
@@ -246,6 +253,8 @@ private fun IngredientItem(
 @Composable
 fun RecipeDetailScreenPreview() {
     ComposedTheme {
-        RecipeDetailScreen(onBackClick = {  })
+        RecipeDetailScreen(
+            recipeId = 1,
+            onBackClick = {  })
     }
 }

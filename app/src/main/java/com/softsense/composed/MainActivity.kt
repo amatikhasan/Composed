@@ -52,6 +52,7 @@ fun SetupNavGraph() {
         composable("recipeDetail/{recipeId}") { backStackEntry ->
             val recipeId = backStackEntry.arguments?.getString("recipeId")
             RecipeDetailScreen(
+                recipeId = recipeId!!.toInt(),
                 onBackClick = { navController.popBackStack() },
             )
         }

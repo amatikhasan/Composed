@@ -16,10 +16,6 @@ class RecipeViewModel @Inject constructor(private val useCase: GetRecipeUseCase)
     private val _recipeUiState = MutableStateFlow<RecipeUiState>(RecipeUiState.Loading)
     val recipeUiState: StateFlow<RecipeUiState> = _recipeUiState
 
-    init {
-        loadRecipes()
-    }
-
     fun loadRecipes() {
         viewModelScope.launch {
             try {
@@ -28,6 +24,18 @@ class RecipeViewModel @Inject constructor(private val useCase: GetRecipeUseCase)
             } catch (e: Exception) {
                 Log.e("API_ERROR", "Exception: ${e.message}")
                 _recipeUiState.value = RecipeUiState.Error("Failed to load recipes")
+            }
+        }
+    }
+
+    fun getSingleRecipe(id: Int) {
+        viewModelScope.launch {
+            try {
+                val response = useCase.getSingleRecipe(id)
+                _recipeUiState.value = RecipeUiState.Success(recipe = response)
+            } catch (e: Exception) {
+                Log.e("API_ERROR", "Exception: ${e.message}")
+                _recipeUiState.value = RecipeUiState.Error("Failed to load recipe")
             }
         }
     }

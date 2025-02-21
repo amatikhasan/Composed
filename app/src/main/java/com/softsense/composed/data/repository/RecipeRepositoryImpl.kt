@@ -16,8 +16,8 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSingleRecipe(int: Int): Recipe {
-        Log.d("TAG", "getSingleRecipe: ")
-        return apiService.getRecipeById(int)
+        Log.d("TAG", "getSingleRecipe: $int")
+        return apiService.getRecipeById(int.toString())
     }
 
     override suspend fun getRecipeByCategory(category: String): RecipeResponse {

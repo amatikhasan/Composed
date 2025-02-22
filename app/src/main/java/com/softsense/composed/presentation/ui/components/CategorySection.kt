@@ -2,6 +2,7 @@ package com.softsense.composed.presentation.ui.components
 
 import android.graphics.Paint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -53,7 +54,7 @@ fun CategoryItem(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(80.dp)
+        modifier = Modifier.width(80.dp).clickable { onClick() },
     ) {
         Image(painter = painterResource(
             id = R.drawable.food),
@@ -62,7 +63,7 @@ fun CategoryItem(
                 .fillMaxWidth()
                 .height(60.dp)
                 .clip(RoundedCornerShape(12.dp)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(

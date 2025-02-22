@@ -36,8 +36,13 @@ fun AllRecipesScreen(
     navController: NavController
 ) {
     val recipeUiState by recipeViewModel.recipeUiState.collectAsState()
-    if (category != null)
-        recipeViewModel.loadRecipeByCategory(category)
+
+    LaunchedEffect(Unit) {
+        if (category != null)
+            recipeViewModel.loadRecipeByCategory(category)
+        else
+            recipeViewModel.loadRecipes()
+    }
 
     fun onRecipeClick(recipe: Recipe) {
         navController.navigate("recipeDetail/${recipe.id}")
@@ -45,6 +50,7 @@ fun AllRecipesScreen(
 
     AllRecipesScreen(
         modifier = modifier,
+        category = category,
         recipeUiState = recipeUiState,
         onRecipeClick = { recipe -> onRecipeClick(recipe) },
         onBackClick = { navController.popBackStack() }
@@ -56,6 +62,7 @@ fun AllRecipesScreen(
 @Composable
 private fun AllRecipesScreen(
     modifier: Modifier = Modifier,
+    category: String? = null,
     recipeUiState: RecipeUiState,
     onRecipeClick: (Recipe) -> Unit,
     onBackClick: () -> Unit
@@ -66,9 +73,12 @@ private fun AllRecipesScreen(
                 title = {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.CenterStart
                     ) {
-                        Text("Recipes")
+                        Text(
+                            text = category ?: "Latest Recipes",
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
                 },
                 navigationIcon = {
@@ -79,7 +89,9 @@ private fun AllRecipesScreen(
             )
         }
     ) { paddingValues ->
-        Surface(modifier = modifier.fillMaxSize().padding(paddingValues),
+        Surface(modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues),
             color = MaterialTheme.colorScheme.background) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
 
@@ -91,11 +103,19 @@ private fun AllRecipesScreen(
                     is RecipeUiState.Loading -> item { LoadingIndicator() }
                     is RecipeUiState.Error -> item { ErrorMessage(recipeUiState.message) }
                     is RecipeUiState.Success -> {
+                        val recipes = if (category != null) {
+                            recipeUiState.recipeByCategory
+                        } else {
+                            (recipeUiState as RecipeUiState.Success).recipes
+                        }
                         item {
-                            recipeUiState.recipes.forEach { recipe ->
+                            recipes.forEach { recipe ->
                                 RecipeCard(recipe = recipe,
-                                    modifier = Modifier.fillMaxWidth().height(180.dp)
-                                        .padding(horizontal = 16.dp).padding(bottom = 8.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(180.dp)
+                                        .padding(horizontal = 16.dp)
+                                        .padding(bottom = 8.dp),
                                     onClick = { onRecipeClick(recipe) })
                                 Spacer(modifier = Modifier.height(8.dp))
                             }

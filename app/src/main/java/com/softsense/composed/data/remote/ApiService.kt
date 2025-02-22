@@ -14,7 +14,7 @@ interface ApiService {
     suspend fun getRecipeById(@Path("id") id: String): Recipe
 
     @GET("recipes/tag/{category}")
-    suspend fun getRecipeByCategory(@Path("id") category: String): RecipeResponse
+    suspend fun getRecipeByCategory(@Path("category") category: String): RecipeResponse
 
     @GET("recipes/tags")
     suspend fun getRecipeCategory(): List<String>
